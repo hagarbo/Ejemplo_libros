@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Autor;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\BrowserKit\Test\Constraint\BrowserCookieValueSame;
 
 /**
  * @extends ServiceEntityRepository<Autor>
@@ -45,4 +47,20 @@ class AutorRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findByFechaNac(DateTime $fechaNac):array
+    {
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT a FROM App\Entity\Autor a WHERE a.fechaNacimiento >= :fechaNac ORDER BY a.fechaNacimiento DESC");
+        return $query->setParameter("fechaNac", $fechaNac)->getResult();
+
+    }
+
+    public function findAuthorWithSales(int $sales): array
+    {
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT autor FROM App\Entity\Autor autor JOIN autor.libros libro WHERE libro.unidadesVendidas >= :ventas");
+        return $query->setParameter("ventas", $sales)->getResult();
+    }
+
 }

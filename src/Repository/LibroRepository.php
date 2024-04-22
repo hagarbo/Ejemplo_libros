@@ -45,4 +45,19 @@ class LibroRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findMaxVentas():int
+    {
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT MAX(libro.unidadesVendidas) FROM App\Entity\Libro libro");
+        return $query->getSingleScalarResult();
+    }
+
+    public function findBestSeller():array 
+    {
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT libro FROM App\Entity\Libro libro 
+                                WHERE libro.unidadesVendidas = (SELECT MAX(l.unidadesVendidas) FROM App\Entity\Libro l)");
+        return $query->getResult();
+    }
 }
